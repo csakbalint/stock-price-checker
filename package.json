@@ -84,7 +84,8 @@
     ],
     "moduleNameMapper": {
       "^@common/common(|/.*)$": "<rootDir>/libs/common/src/$1",
-      "^@lib/common(|/.*)$": "<rootDir>/libs/common/src/$1"
+      "^@lib/common(|/.*)$": "<rootDir>/libs/common/src/$1",
+      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1"
     }
   },
   "lint-staged": {
