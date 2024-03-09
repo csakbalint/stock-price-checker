@@ -9,7 +9,7 @@ export class FinnhubService {
     return this.api.symbolLookup(query);
   }
 
-  getQuotes(symbol: string) {
+  getQuote(symbol: string) {
     return this.api.getQuote(symbol);
   }
 }

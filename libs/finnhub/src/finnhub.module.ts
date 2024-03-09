@@ -9,7 +9,7 @@ import { FinnhubService } from './finnhub.service';
   providers: [
     {
       provide: FinnhubAPI,
-      useFactory: async (config) =>
+      useFactory: async (config: ConfigService) =>
         new FinnhubAPI(config.get('FINNHUB_API_KEY')),
       inject: [ConfigService],
     },
