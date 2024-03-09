@@ -37,6 +37,15 @@
         "tsConfigPath": "libs/finnhub/tsconfig.lib.json"
       }
     },
+    "stock-checker": {
+      "type": "application",
+      "root": "apps/stock-checker",
+      "entryFile": "main",
+      "sourceRoot": "apps/stock-checker/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/stock-checker/tsconfig.app.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",
