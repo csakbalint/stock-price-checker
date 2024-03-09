@@ -27,6 +27,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
+    },
+    "finnhub": {
+      "type": "library",
+      "root": "libs/finnhub",
+      "entryFile": "index",
+      "sourceRoot": "libs/finnhub/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/finnhub/tsconfig.lib.json"
+      }
     }
   }
 }
