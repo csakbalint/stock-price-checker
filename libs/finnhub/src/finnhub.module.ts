@@ -9,6 +9,7 @@ import { FinnhubService } from './finnhub.service';
   providers: [
     {
       provide: FinnhubAPI,
+      // FIXME: replace this library because it consumes error, which is not a good practice
       useFactory: async (config: ConfigService) =>
         new FinnhubAPI(config.get('FINNHUB_API_KEY')),
       inject: [ConfigService],
