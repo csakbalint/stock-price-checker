@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '@app/common';
+import { DatabaseService } from '@app/database';
 
 import { SymbolStockResponse } from './dto/symbol-stock-response.dto';
 
 @Injectable()
 export class StockService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly db: DatabaseService) {}
 
   async getStockBySymbol(symbol: string) {
-    const response = await this.prismaService.symbol.findUnique({
+    const response = await this.db.symbol.findUnique({
       where: { name: symbol },
       include: {
         quotes: {

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { CommonModule } from '@app/common';
+import { DatabaseModule } from '@app/database';
 
 import { StockController } from './stock.controller';
 import { StockService } from './stock.service';
 
 @Module({
-  imports: [CommonModule],
+  imports: [DatabaseModule],
   providers: [StockService],
   controllers: [StockController],
 })
