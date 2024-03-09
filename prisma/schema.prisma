@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Symbol {
+  id     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name   String  @unique
+  quotes Quote[]
+}
+
+model Quote {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  price    Float
+  symbolId String   @db.Uuid
+  polledAt DateTime @default(now())
+  symbol   Symbol   @relation(fields: [symbolId], references: [id])
+}
