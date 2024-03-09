@@ -90,7 +90,8 @@
     ],
     "moduleNameMapper": {
       "^@app/finnhub(|/.*)$": "<rootDir>/libs/finnhub/src/$1",
-      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1"
+      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
+      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1"
     }
   },
   "lint-staged": {
