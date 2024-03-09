@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { isEmpty, reduce } from 'lodash';
+import { map, sum } from 'lodash';
 
 type SymbolWithQuotes = Prisma.SymbolGetPayload<{
   include: { quotes: true };
@@ -15,14 +15,8 @@ export class SymbolStockResponse implements SymbolWithQuotes {
 
   @Expose()
   @Transform(({ obj }) => {
-    if (isEmpty((obj as SymbolWithQuotes)?.quotes)) {
-      return null;
-    }
-    return reduce(
-      (obj as SymbolWithQuotes)?.quotes,
-      (acc, quote) => (acc ?? 0) + quote.price,
-      0,
-    );
+    const values = map((obj as SymbolWithQuotes)?.quotes, 'price');
+    return values.length ? sum(values) / values.length : null;
   })
   average!: number | null;
 
