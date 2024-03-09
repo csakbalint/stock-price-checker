@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Put,
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,4 +22,11 @@ export class StockController {
   getStockBySymbol(@Param('symbol') symbol: string) {
     return this.stockService.getStockBySymbol(symbol);
   }
+
+  @Put(':symbol')
+  startPolling(@Param('symbol') symbol: string) {
+    return this.stockService.startPolling(symbol);
+  }
+
+  // TODO: add a route to stop polling
 }

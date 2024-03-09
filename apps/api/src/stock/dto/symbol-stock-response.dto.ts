@@ -27,19 +27,19 @@ export class SymbolStockResponse implements SymbolWithQuotes {
   average!: number | null;
 
   @Expose()
-  @Transform(({ obj }) => (obj as SymbolWithQuotes)?.quotes[0]?.price ?? null)
+  @Transform(({ obj }) => (obj as SymbolWithQuotes)?.quotes?.[0]?.price ?? null)
   current!: number | null;
 
   @Expose()
   @Transform(({ obj }) => {
-    return (obj as SymbolWithQuotes)?.quotes[0]?.polledAt ?? null;
+    return (obj as SymbolWithQuotes)?.quotes?.[0]?.polledAt ?? null;
   })
   lastUpdatedAt!: string | null;
 
   @Exclude({ toPlainOnly: true })
   quotes!: SymbolWithQuotes['quotes'];
 
-  constructor(partial: SymbolWithQuotes) {
+  constructor(partial: Partial<SymbolWithQuotes>) {
     Object.assign(this, partial);
   }
 }
