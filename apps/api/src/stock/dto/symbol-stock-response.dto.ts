@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { map, sum } from 'lodash';
@@ -10,10 +11,12 @@ export class SymbolStockResponse implements SymbolWithQuotes {
   @Exclude({ toPlainOnly: true })
   id!: string;
 
+  @ApiProperty({ type: String, example: 'AAPL' })
   @Expose()
   @Transform(({ value }) => value ?? null)
   name!: string;
 
+  @ApiProperty({ type: Number, nullable: true, example: 100 })
   @Expose()
   @Transform(({ obj }) => {
     const values = map((obj as SymbolWithQuotes)?.quotes, 'price');
@@ -21,10 +24,16 @@ export class SymbolStockResponse implements SymbolWithQuotes {
   })
   average!: number | null;
 
+  @ApiProperty({ type: Number, nullable: true, example: 100 })
   @Expose()
   @Transform(({ obj }) => (obj as SymbolWithQuotes)?.quotes?.[0]?.price ?? null)
   current!: number | null;
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    example: '2021-08-01T00:00:00.000Z',
+  })
   @Expose()
   @Transform(({ obj }) => {
     return (obj as SymbolWithQuotes)?.quotes?.[0]?.polledAt ?? null;
