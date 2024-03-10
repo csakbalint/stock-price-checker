@@ -19,25 +19,15 @@ export class StockService {
   ) {}
 
   async getStockBySymbol(symbolName: string) {
-    const response = await this.db.symbol.findUnique({
-      where: { name: symbolName },
-      include: {
-        quotes: {
-          orderBy: { polledAt: 'desc' },
-          take: 10,
-        },
-      },
-    });
-    if (!response) {
+    const symbol = await this.fetchSymbol(symbolName);
+    if (!symbol) {
       throw new NotFoundException(`Symbol "${symbolName}" not found.`);
     }
-    return new SymbolStockResponse(response);
+    return new SymbolStockResponse(symbol);
   }
 
   async startPolling(symbolName: string) {
-    let symbol = await this.db.symbol.findUnique({
-      where: { name: symbolName },
-    });
+    let symbol = await this.fetchSymbol(symbolName);
     if (!symbol) {
       const results = await this.finnhubService.getSymbols(symbolName);
       const found = find(results?.result, { symbol: symbolName });
@@ -52,6 +42,12 @@ export class StockService {
         where: { name: symbolName },
         update: {},
         create: { name: symbolName },
+        include: {
+          quotes: {
+            orderBy: { polledAt: 'desc' },
+            take: 10,
+          },
+        },
       });
     }
     await this.fetchSymbolQueue.add(
@@ -60,5 +56,17 @@ export class StockService {
     );
 
     return new SymbolStockResponse(symbol);
+  }
+
+  private async fetchSymbol(symbolName: string) {
+    return this.db.symbol.findUnique({
+      where: { name: symbolName },
+      include: {
+        quotes: {
+          orderBy: { polledAt: 'desc' },
+          take: 10,
+        },
+      },
+    });
   }
 }

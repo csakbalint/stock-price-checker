@@ -21,7 +21,7 @@ export class UpdateQuoteConsumer {
       this.logger.info(
         `Job [UpdateQuote-${symbolName}] started: ${JSON.stringify(job.data)}`,
       );
-      let symbol = await this.db.symbol.findFirst({
+      let symbol = await this.db.symbol.findUnique({
         where: { name: symbolName },
       });
       if (!symbol) {
