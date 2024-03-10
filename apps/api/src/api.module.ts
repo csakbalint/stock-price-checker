@@ -1,6 +1,7 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import { ConfigurationModule, ConfigurationService } from '@app/common';
 
 import { StockModule } from './stock/stock.module';
 
@@ -10,16 +11,16 @@ import { QuoteModule } from './quote';
 
 @Module({
   imports: [
-    ConfigModule,
+    ConfigurationModule,
     BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
+      imports: [ConfigurationModule],
+      useFactory: (config: ConfigurationService) => ({
         redis: {
           host: config.get('REDIS_HOST', 'localhost'),
           port: config.get('REDIS_PORT', 6379),
         },
       }),
-      inject: [ConfigService],
+      inject: [ConfigurationService],
     }),
     StockModule,
     QuoteModule,
