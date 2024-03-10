@@ -20,6 +20,12 @@ services:
       - ./apps/api/src/:/app/apps/api/src
     env_file:
       - .env
+    # this is for demonstration purposes only
+    healthcheck:
+      test: curl --fail http://localhost:3000/health || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 5
   stock-checker:
     build:
       context: .

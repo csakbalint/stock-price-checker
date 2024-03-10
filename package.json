@@ -1,9 +1,9 @@
 {
   "name": "advanced-stock-price-checker",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
+  "description": "This repository contains a stock price checker application built using Node.js and NestJS. The app utilizes the Finnhub API to fetch stock data and expose it to developers via API.",
+  "author": "Balint Csak <csak.balint@gmail.com> (https://www.linkedin.com/in/balintcsak/)",
+  "private": false,
   "license": "UNLICENSED",
   "scripts": {
     "db:start": "docker run -p 5432:5432 -e POSTGRES_PASSWORD=nest -e POSTGRES_USER=nest -e POSTGRES_DB=nest -d postgres:15",
@@ -30,14 +30,18 @@
     "node": ">= 16.15.0"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.0.2",
     "@nestjs/bull": "^10.1.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/microservices": "^10.3.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.3.0",
+    "@nestjs/terminus": "^10.2.3",
     "@prisma/client": "5.10.2",
     "@stoqey/finnhub": "^0.3.4",
+    "axios": "^1.6.7",
     "bull": "^4.12.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

@@ -4,7 +4,7 @@ import { LoggerErrorInterceptor } from 'nestjs-pino';
 
 import { ConfigurationService } from '@app/common';
 
-import { ApiModule } from './api.module';
+import { ApiModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiModule);
@@ -18,6 +18,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, documentBuilder);
   SwaggerModule.setup('swagger', app, document);
+
+  app.enableShutdownHooks();
 
   await app.listen(config.get('API_PORT', 3000));
 }

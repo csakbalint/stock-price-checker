@@ -6,12 +6,13 @@ import { ConfigurationModule, ConfigurationService } from '@app/common';
 
 import { StockModule } from './stock/stock.module';
 
-import { ApiController } from './api.controller';
-import { ApiService } from './api.service';
+import { AppService } from './app.service';
+import { HealthModule } from './health';
 import { QuoteModule } from './quote';
 
 @Module({
   imports: [
+    HealthModule,
     ConfigurationModule,
     LoggerModule.forRootAsync({
       imports: [ConfigurationModule],
@@ -40,7 +41,6 @@ import { QuoteModule } from './quote';
     StockModule,
     QuoteModule,
   ],
-  controllers: [ApiController],
-  providers: [ApiService],
+  providers: [AppService],
 })
 export class ApiModule {}
