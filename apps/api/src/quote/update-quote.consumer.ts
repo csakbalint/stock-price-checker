@@ -25,10 +25,17 @@ export class UpdateQuoteConsumer {
         where: { name: symbolName },
       });
       if (!symbol) {
+        // this is definitely not intended, so we log a warning
         this.logger.warn(
           `Job [UpdateQuote-${symbolName}] symbol not found in database, creating...`,
         );
-        symbol = await this.db.symbol.create({ data: { name: symbolName } });
+        // we create the symbol if it doesn't exist but we don't force it
+        // if a concurrent job creates the symbol, we'll just use that one
+        symbol = await this.db.symbol.upsert({
+          where: { name: symbolName },
+          update: {},
+          create: { name: symbolName },
+        });
         this.logger.info(
           `Job [UpdateQuote-${symbolName}] symbol created ${JSON.stringify(symbol)}`,
         );
