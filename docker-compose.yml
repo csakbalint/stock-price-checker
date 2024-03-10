@@ -1,10 +1,48 @@
 version: '3.9'
 services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP=api
+    container_name: stock_api
+    ports:
+      - 3000:3000
+    networks:
+      - stock-network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/api/src/:/app/apps/api/src
+    env_file:
+      - .env
+  stock-checker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP=stock-checker
+    container_name: stock_checker
+    ports:
+      - 3000
+    networks:
+      - stock-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/stock-checker/src:/app/apps/stock-checker/src
+    env_file:
+      - .env
   db:
     image: postgres:14-alpine
     container_name: stock_db
     ports:
-      - 5432:5432
+      - 5432
     volumes:
       - ./.tmp/postgres:/var/lib/postgresql/data
     networks:
@@ -27,13 +65,29 @@ services:
     networks:
       - stock-network
     ports:
-      - 6379:6379
+      - 6379
     command: redis-server --save 20 1 --loglevel warning
     healthcheck:
       test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       interval: 5s
       timeout: 3s
       retries: 5
+  bullboard:
+    container_name: bullboard
+    image: deadly0/bull-board
+    restart: always
+    ports:
+      - 4000:3000
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USE_TLS: 'false'
+      BULL_PREFIX: bull
+    networks:
+      - stock-network
+    depends_on:
+      redis:
+        condition: service_healthy
 networks:
   stock-network:
     driver: bridge
