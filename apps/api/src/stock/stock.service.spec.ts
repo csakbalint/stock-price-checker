@@ -1,6 +1,7 @@
 import { getQueueToken } from '@nestjs/bull';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getLoggerToken } from 'nestjs-pino';
 
 import { ConfigurationService, SYMBOL_QUOTE_FETCH_QUEUE } from '@app/common';
 import { DatabaseService } from '@app/database';
@@ -25,6 +26,9 @@ describe('StockService', () => {
   const config = {
     get: jest.fn(),
   };
+  const logger = {
+    warn: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +41,7 @@ describe('StockService', () => {
           provide: getQueueToken(SYMBOL_QUOTE_FETCH_QUEUE),
           useValue: mockQueue,
         },
+        { provide: getLoggerToken(StockService.name), useValue: logger },
       ],
     }).compile();
 

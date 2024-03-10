@@ -2,11 +2,13 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bull';
 import { find } from 'lodash';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
   ConfigurationService,
   FetchSymbolDto,
   SYMBOL_QUOTE_FETCH_QUEUE,
+  TooManyRequestsException,
 } from '@app/common';
 import { DatabaseService } from '@app/database';
 import { FinnhubService } from '@app/finnhub';
@@ -21,6 +23,8 @@ export class StockService {
     private readonly finnhubService: FinnhubService,
     @InjectQueue(SYMBOL_QUOTE_FETCH_QUEUE)
     private readonly fetchSymbolQueue: Queue<FetchSymbolDto>,
+    @InjectPinoLogger(StockService.name)
+    private readonly logger: PinoLogger,
   ) {}
 
   async getStockBySymbol(symbolName: string) {
@@ -34,8 +38,11 @@ export class StockService {
   async startPolling(symbolName: string) {
     let symbol = await this.fetchSymbol(symbolName);
     if (!symbol) {
-      const results = await this.finnhubService.getSymbols(symbolName);
-      const found = find(results?.result, { symbol: symbolName });
+      // TODO: stock-checker is responsible for communicating with the Finnhub API
+      // so we should probably move this logic to the stock-checker service and
+      // call it via RPC
+      // TODO: also it would be good to cache the results of this call
+      const found = await this.querySymbolExternal(symbolName);
 
       if (!found) {
         throw new NotFoundException(`Symbol "${symbolName}" not found.`);
@@ -61,6 +68,17 @@ export class StockService {
     );
 
     return new SymbolStockResponse(symbol);
+  }
+
+  private async querySymbolExternal(symbolName: string) {
+    try {
+      const results = await this.finnhubService.getSymbols(symbolName);
+      return find(results?.result, { symbol: symbolName });
+    } catch (error) {
+      this.logger.warn(`Failed to fetch symbol from Finnhub API: ${error}`);
+      // let's treat the request the same way as the Finnhub API
+      throw new TooManyRequestsException();
+    }
   }
 
   private async fetchSymbol(symbolName: string) {

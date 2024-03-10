@@ -7,7 +7,12 @@ import {
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiTooManyRequestsResponse,
+} from '@nestjs/swagger';
 
 import { SymbolStockResponse } from './dto/symbol-stock-response.dto';
 
@@ -37,6 +42,7 @@ export class StockController {
     type: SymbolStockResponse,
   })
   @ApiNotFoundResponse({ description: 'Symbol "{symbolName}" not found.' })
+  @ApiTooManyRequestsResponse({ description: 'Too many requests.' })
   @Put(':symbol')
   startPolling(@Param('symbol') symbol: string) {
     return this.stockService.startPolling(symbol);

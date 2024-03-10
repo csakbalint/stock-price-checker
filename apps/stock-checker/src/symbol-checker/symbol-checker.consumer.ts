@@ -25,11 +25,14 @@ export class SymbolCheckerConsumer {
     const { symbol: symbolName } = job.data;
     try {
       this.logger.info(`Job [SymbolChecker-${symbolName}] started`);
+      // FIXME: we should handle rate limits here, but it's not a priority
+      // because we rerun this job every minute
       const results = await this.finnhubService.getQuote(symbolName);
       this.logger.debug(
         `Job [SymbolChecker-${symbolName}] quote fetched ${JSON.stringify(results)}`,
       );
-      // TODO: transfer date
+      // TODO: it would be useful to transfer dates as well,
+      // because we don't have to store the exact, not-changed stock price multiple times
       await this.updateQuoteQueue.add({
         symbol: symbolName,
         price: results.close,
