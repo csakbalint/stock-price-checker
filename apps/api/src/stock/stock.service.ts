@@ -3,7 +3,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bull';
 import { find } from 'lodash';
 
-import { FetchSymbolDto, SYMBOL_QUOTE_FETCH_QUEUE } from '@app/common';
+import {
+  ConfigurationService,
+  FetchSymbolDto,
+  SYMBOL_QUOTE_FETCH_QUEUE,
+} from '@app/common';
 import { DatabaseService } from '@app/database';
 import { FinnhubService } from '@app/finnhub';
 
@@ -12,6 +16,7 @@ import { SymbolStockResponse } from './dto/symbol-stock-response.dto';
 @Injectable()
 export class StockService {
   constructor(
+    private readonly config: ConfigurationService,
     private readonly db: DatabaseService,
     private readonly finnhubService: FinnhubService,
     @InjectQueue(SYMBOL_QUOTE_FETCH_QUEUE)
@@ -52,7 +57,7 @@ export class StockService {
     }
     await this.fetchSymbolQueue.add(
       { symbol: symbolName },
-      { repeat: { every: 10000 } },
+      { repeat: { every: this.config.get('REPEAT_STOCK_POLLING_MS', 60000) } },
     );
 
     return new SymbolStockResponse(symbol);

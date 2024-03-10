@@ -33,4 +33,7 @@ export class EnvironmentVariables {
 
   @IsString()
   REDIS_PASSWORD!: string;
+
+  @IsNumber()
+  REPEAT_STOCK_POLLING_MS!: number;
 }
