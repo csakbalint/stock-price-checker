@@ -1,7 +1,9 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 import {
+  FetchSymbolDto,
   SYMBOL_QUOTE_FETCH_QUEUE,
   SYMBOL_QUOTE_UPDATE_QUEUE,
 } from '@app/common';
@@ -14,22 +16,29 @@ export class SymbolCheckerConsumer {
     private readonly finnhubService: FinnhubService,
     @InjectQueue(SYMBOL_QUOTE_UPDATE_QUEUE)
     private readonly updateQuoteQueue: Queue<UpdateQuoteDto>,
+    @InjectPinoLogger(SymbolCheckerConsumer.name)
+    private readonly logger: PinoLogger,
   ) {}
 
   @Process()
-  async transcode(job: Job<{ name: string }>) {
-    const { name } = job.data;
+  async transcode(job: Job<FetchSymbolDto>) {
+    const { symbol: symbolName } = job.data;
     try {
-      const results = await this.finnhubService.getQuote(name);
+      this.logger.info(`Job [SymbolChecker-${symbolName}] started`);
+      const results = await this.finnhubService.getQuote(symbolName);
+      this.logger.debug(
+        `Job [SymbolChecker-${symbolName}] quote fetched ${JSON.stringify(results)}`,
+      );
       // TODO: transfer date
       await this.updateQuoteQueue.add({
-        symbol: name,
+        symbol: symbolName,
         price: results.close,
       });
+      this.logger.info(`Job [SymbolChecker-${symbolName}] finished`);
     } catch (error) {
-      // FIXME: handle error
-      // TODO: add logging
-      console.error(error);
+      // we don't want to retry the job, because it's repeated every minute
+      // so we only log the error
+      this.logger.error(`Job [SymbolChecker-${symbolName}] error ${error}`);
     }
   }
 }
