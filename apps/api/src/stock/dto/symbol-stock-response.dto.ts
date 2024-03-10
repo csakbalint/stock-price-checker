@@ -11,6 +11,7 @@ export class SymbolStockResponse implements SymbolWithQuotes {
   id!: string;
 
   @Expose()
+  @Transform(({ value }) => value ?? null)
   name!: string;
 
   @Expose()

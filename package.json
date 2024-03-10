@@ -84,6 +84,7 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "clearMocks": true,
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

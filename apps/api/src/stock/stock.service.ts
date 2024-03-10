@@ -45,12 +45,15 @@ export class StockService {
       if (!found) {
         throw new NotFoundException(`Symbol "${symbolName}" not found.`);
       }
-
-      symbol = await this.db.symbol.create({
-        data: { name: symbolName },
+      // we create the symbol if it doesn't exist but we don't force it
+      // if a concurrent job creates the symbol, we'll just use that one
+      // TODO: save the job name to the database so we can stop it later
+      symbol = await this.db.symbol.upsert({
+        where: { name: symbolName },
+        update: {},
+        create: { name: symbolName },
       });
     }
-    // TODO: save the job name to the database so we can stop it later
     await this.fetchSymbolQueue.add(
       { symbol: symbolName },
       { repeat: { every: 10000 } },

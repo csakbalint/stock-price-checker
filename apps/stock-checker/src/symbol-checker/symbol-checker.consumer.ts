@@ -36,7 +36,7 @@ export class SymbolCheckerConsumer {
       });
       this.logger.info(`Job [SymbolChecker-${symbolName}] finished`);
     } catch (error) {
-      // we don't want to retry the job, because it's repeated every minute
+      // we don't want to retry this job, because it's repeated every minute
       // so we only log the error
       this.logger.error(`Job [SymbolChecker-${symbolName}] error ${error}`);
     }
