@@ -9,7 +9,7 @@ describe('UpdateQuoteConsumer', () => {
   let consumer: UpdateQuoteConsumer;
   const db = {
     symbol: {
-      findFirst: jest.fn(),
+      findUnique: jest.fn(),
       upsert: jest.fn(),
     },
     quote: {
@@ -47,7 +47,7 @@ describe('UpdateQuoteConsumer', () => {
   describe('transcode', () => {
     describe('when symbol not found', () => {
       beforeEach(async () => {
-        db.symbol.findFirst.mockResolvedValue(null);
+        db.symbol.findUnique.mockResolvedValue(null);
         db.symbol.upsert.mockResolvedValue({ id: 1, name: 'AAPL' });
         // let's assume that the job is { data: { symbol: 'AAPL' } }
         // we don't need any other data for this test
@@ -56,8 +56,8 @@ describe('UpdateQuoteConsumer', () => {
         } as any);
       });
 
-      it('should call db.symbol.findFirst', async () => {
-        expect(db.symbol.findFirst).toHaveBeenCalledWith({
+      it('should call db.symbol.findUnique', async () => {
+        expect(db.symbol.findUnique).toHaveBeenCalledWith({
           where: { name: 'AAPL' },
         });
       });
@@ -88,7 +88,7 @@ describe('UpdateQuoteConsumer', () => {
 
     describe('when symbol found', () => {
       beforeEach(async () => {
-        db.symbol.findFirst.mockResolvedValue({ id: 1, name: 'AAPL' });
+        db.symbol.findUnique.mockResolvedValue({ id: 1, name: 'AAPL' });
         // let's assume that the job is { data: { symbol: 'AAPL' } }
         // we don't need any other data for this test
         await consumer.transcode({
@@ -96,8 +96,8 @@ describe('UpdateQuoteConsumer', () => {
         } as any);
       });
 
-      it('should call db.symbol.findFirst', async () => {
-        expect(db.symbol.findFirst).toHaveBeenCalledWith({
+      it('should call db.symbol.findUnique', async () => {
+        expect(db.symbol.findUnique).toHaveBeenCalledWith({
           where: { name: 'AAPL' },
         });
       });

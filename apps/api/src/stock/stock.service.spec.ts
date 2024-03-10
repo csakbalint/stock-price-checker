@@ -88,6 +88,12 @@ describe('StockService', () => {
       it('should call db.symbol.findUnique', () => {
         expect(mockDbService.symbol.findUnique).toHaveBeenCalledWith({
           where: { name: 'AAPL' },
+          include: {
+            quotes: {
+              orderBy: { polledAt: 'desc' },
+              take: 10,
+            },
+          },
         });
       });
 
@@ -115,6 +121,12 @@ describe('StockService', () => {
       it('should call db.symbol.findUnique', () => {
         expect(mockDbService.symbol.findUnique).toHaveBeenCalledWith({
           where: { name: 'AAPL' },
+          include: {
+            quotes: {
+              orderBy: { polledAt: 'desc' },
+              take: 10,
+            },
+          },
         });
       });
 
@@ -127,6 +139,14 @@ describe('StockService', () => {
           where: { name: 'AAPL' },
           update: {},
           create: { name: 'AAPL' },
+          include: {
+            quotes: {
+              orderBy: {
+                polledAt: 'desc',
+              },
+              take: 10,
+            },
+          },
         });
       });
     });
